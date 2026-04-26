@@ -4,8 +4,9 @@
   "description": "",
   "type": "module",
   "scripts": {
-    "dev": " node --watch src/app.ts",
-    "start": "node src/app.ts",
+    "dev": "tsx --watch src/server.ts",
+    "build": "tsx esbuild.config.ts",
+    "start": "node src/server.js",
     "lint": "eslint src",
     "lint:fix": "eslint src --fix"
   },
@@ -24,6 +25,7 @@
     "eslint-config-prettier": "^10.1.5",
     "eslint-plugin-simple-import-sort": "^12.1.1",
     "globals": "^17.4.0",
+    "tsx": "^4.21.0",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.58.0"
   },
