@@ -1,0 +1,7 @@
+# Default: all text files use LF
+* text=auto eol=lf
+
+# Binary files (don’t touch them)
+*.png binary
+*.jpg binary
+*.zip binary
