@@ -3,7 +3,7 @@
 </h1>
 
 <p align="center">
-  A lightweight, type-safe REST API built with <a href="https://expressjs.com" target="_blank">Express 5</a> and <a href="https://www.typescriptlang.org" target="_blank">TypeScript</a> — designed as the backend backbone for the TourSphere platform.
+  A lightweight, type-safe REST API built with <a href="https://expressjs.com" target="_blank">Express 5</a> and <a href="https://www.typescriptlang.org" target="_blank">TypeScript</a>.
 </p>
 
 <p align="center">
@@ -16,34 +16,29 @@
 
 ---
 
-## 📖 Overview
+## Overview
 
-**TourSphere API** is a backend REST API built with **Express 5** and **TypeScript**. It provides a clean, type-safe server foundation with runtime environment validation and security-first middleware — ready to be extended with full feature modules for the TourSphere platform.
-
-Key highlights:
-
-- ✅ **Express 5** — The latest major release with improved async error handling out of the box
-- ✅ **Zod v4 env validation** — Environment variables validated at startup via `@t3-oss/env-core`, preventing misconfigured deployments
-- ✅ **Security-first middleware** — `helmet` and `cors` configured by default on every request
-- ✅ **Type-safe TypeScript** — Strict mode with `exactOptionalPropertyTypes`, `noUncheckedIndexedAccess`, and `verbatimModuleSyntax`
-- ✅ **esbuild** — Blazing-fast production bundling targeting Node.js 24
+**TourSphere API** is the backend REST API for the TourSphere platform. It is built with **Express 5** and **TypeScript** and provides a clean, production-ready server foundation with runtime environment validation, structured logging, and security-first middleware out of the box.
 
 ---
 
-## 🏗️ Project Structure
+## Tech Stack
 
-```
-src/
-├── app.ts          # Express app setup — middleware stack and base routes
-├── server.ts       # Entry point — binds the app to the configured port
-│
-└── lib/
-    └── env.ts      # Typed, validated environment config (t3-oss/env-core + Zod)
-```
+| Tool | Purpose |
+| ---- | ------- |
+| [Express 5](https://expressjs.com) | HTTP server framework |
+| [TypeScript 5.8](https://www.typescriptlang.org) | Static typing |
+| [Zod 4](https://zod.dev) | Runtime schema & env validation |
+| [@t3-oss/env-core](https://env.t3.gg) | Type-safe environment variables |
+| [Helmet](https://helmetjs.github.io) | HTTP security headers |
+| [Morgan](https://github.com/expressjs/morgan) | Request logging |
+| [CORS](https://github.com/expressjs/cors) | Cross-origin request handling |
+| [esbuild](https://esbuild.github.io) | Production bundler |
+| [tsx](https://tsx.is) | TypeScript runner for development |
 
 ---
 
-## ⚡ Getting Started
+## Getting Started
 
 ### Prerequisites
 
@@ -56,7 +51,7 @@ src/
 pnpm install
 ```
 
-### Environment Setup
+### Environment Variables
 
 Create a `.env` file in the project root:
 
@@ -66,83 +61,56 @@ APP_STAGE=dev
 NODE_ENV=development
 ```
 
-| Variable    | Values                  | Description                              |
-| ----------- | ----------------------- | ---------------------------------------- |
-| `PORT`      | Any number (default `3000`) | Port the HTTP server listens on      |
-| `APP_STAGE` | `dev` \| `production`   | Controls whether `.env` file is loaded   |
-| `NODE_ENV`  | `development` \| `production` | Node runtime environment           |
+All variables are validated at startup using **Zod v4** via `@t3-oss/env-core`. The server will throw and refuse to start if any variable is missing or invalid:
 
-### Running the Server
-
-```bash
-# Development (with hot-reload)
-pnpm dev
-
-# Production
-pnpm start
-```
-
-The server starts on **`http://localhost:3000`** by default.
-
----
-
-## 🛠️ Tech Stack
-
-| Tool                                                    | Purpose                         |
-| ------------------------------------------------------- | ------------------------------- |
-| [Express 5](https://expressjs.com)                      | HTTP server framework           |
-| [TypeScript 5.8](https://www.typescriptlang.org)        | Type safety                     |
-| [Zod 4](https://zod.dev)                                | Runtime schema validation       |
-| [@t3-oss/env-core](https://env.t3.gg)                   | Type-safe environment variables |
-| [Helmet](https://helmetjs.github.io)                    | HTTP security headers           |
-| [CORS](https://github.com/expressjs/cors)               | Cross-origin request handling   |
-| [Morgan](https://github.com/expressjs/morgan)           | HTTP request logging            |
-| [esbuild](https://esbuild.github.io)                    | Fast production bundler         |
-| [tsx](https://tsx.is)                                   | TypeScript execution for dev    |
-| [ESLint](https://eslint.org) + [Prettier](https://prettier.io) | Linting & formatting   |
-
----
-
-## ✨ Architecture Highlights
-
-### Validated Environment at Startup
-
-Instead of reading raw `process.env` values at runtime, all environment variables are declared as a typed schema using `@t3-oss/env-core` and **Zod v4**. If a required variable is missing or has an invalid value, the process throws immediately on startup — no silent misconfigurations.
-
-```ts
+```typescript
 export const env = createEnv({
   server: {
-    PORT: z.coerce.number().default(3000),
-    APP_STAGE: z.enum(['dev', 'production']),
-    NODE_ENV: z.enum(['development', 'production']),
+    PORT: z.coerce.number().default(3000),            // number  — defaults to 3000
+    APP_STAGE: z.enum(['dev', 'production']),          // 'dev' | 'production'
+    NODE_ENV: z.enum(['development', 'production']),   // 'development' | 'production'
   },
   runtimeEnv: process.env,
   emptyStringAsUndefined: true,
 });
 ```
 
-### Stage-Aware `.env` Loading
+> **Note:** The `.env` file is only loaded when `APP_STAGE=dev`. In production, variables are expected to be injected by the host environment.
 
-`dotenv` is only invoked in development (`APP_STAGE=dev`). In production, environment variables are expected to be injected by the host — keeping the runtime clean and 12-factor compliant.
+### Running the Server
 
-```ts
-if (isDevelopment) dotenv.config();
+```bash
+# Development — with hot-reload
+pnpm dev
+
+# Production
+pnpm build
+pnpm start
+```
+
+The API will be available at `http://localhost:3000` by default.
+
+---
+
+## Project Structure
+
+```
+src/
+├── app.ts          # Express app — middleware stack and route registration
+├── server.ts       # Entry point — starts the HTTP server
+│
+└── lib/
+    └── env.ts      # Validated, typed environment config
 ```
 
 ---
 
-## 🔧 Available Scripts
+## Scripts
 
-| Command        | Description                              |
-| -------------- | ---------------------------------------- |
-| `pnpm dev`     | Start dev server with hot-reload (`tsx`) |
-| `pnpm build`   | Bundle for production with esbuild       |
-| `pnpm start`   | Run the compiled production bundle       |
-| `pnpm lint`    | Lint source files with ESLint            |
-| `pnpm lint:fix`| Lint and auto-fix with ESLint            |
-
----
-
-## 📄 License
-
-This project is private and unlicensed.
+| Command | Description |
+| ------- | ----------- |
+| `pnpm dev` | Start the dev server with hot-reload |
+| `pnpm build` | Bundle for production with esbuild |
+| `pnpm start` | Run the production bundle |
+| `pnpm lint` | Lint source files |
+| `pnpm lint:fix` | Lint and auto-fix |
