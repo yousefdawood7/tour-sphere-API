@@ -1,8 +1,15 @@
 import './config/db';
 
 import { app } from './app';
+import { mongoConnect } from './config/db';
 import { env } from './lib/env';
 
-app.listen(env.PORT, () => {
-  console.log(`Server is running on port ${env.PORT}`);
-});
+async function bootstrap() {
+  await mongoConnect();
+
+  app.listen(env.PORT, () => {
+    console.log(`Server is running on port ${env.PORT}`);
+  });
+}
+
+void bootstrap();

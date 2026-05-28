@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 
 import { env } from '../lib/env';
 
-async function main() {
+export async function mongoConnect() {
   await mongoose.connect(
     env.DATABASE_URL.replace(
       '<PASSWORD>',
@@ -12,7 +12,3 @@ async function main() {
 
   console.log('Database connected successfully');
 }
-
-void main().catch((err) => {
-  console.log('Something went wrong: ', err);
-});
