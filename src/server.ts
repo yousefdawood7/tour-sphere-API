@@ -1,4 +1,5 @@
 import './config/db';
+import 'reflect-metadata';
 
 import { app } from './app';
 import { mongoConnect } from './config/db';
