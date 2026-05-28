@@ -8,7 +8,7 @@ export async function mongoConnect() {
       '<PASSWORD>',
       encodeURIComponent(env.DATABASE_PASSWORD),
     ),
+    { dbName: 'tour-sphere' },
   );
-
   console.log('Database connected successfully');
 }
