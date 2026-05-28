@@ -16,6 +16,10 @@ export const env = createEnv({
     PORT: z.coerce.number().default(3000),
     APP_STAGE: z.enum(['dev', 'production']),
     NODE_ENV: z.enum(['development', 'production']),
+
+    DATABASE_NAME: z.string().min(3).max(128),
+    DATABASE_PASSWORD: z.string().min(3).max(128),
+    DATABASE_URL: z.url(),
   },
 
   runtimeEnv: process.env,
