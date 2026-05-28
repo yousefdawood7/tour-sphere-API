@@ -1,3 +1,5 @@
+import './config/db';
+
 import { app } from './app';
 import { env } from './lib/env';
 
