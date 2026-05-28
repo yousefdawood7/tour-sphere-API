@@ -13,4 +13,6 @@ async function main() {
   console.log('Database connected successfully');
 }
 
-void main();
+void main().catch((err) => {
+  console.log('Something went wrong: ', err);
+});
