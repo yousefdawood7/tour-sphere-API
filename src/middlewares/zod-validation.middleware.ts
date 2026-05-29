@@ -1,0 +1,20 @@
+import type { NextFunction, Request, Response } from 'express';
+import { z } from 'zod';
+
+import { ERROR_CONFIG } from '../config/error.config';
+import { handleResposeError } from '../utils/handle-response';
+import { handleZodErrors } from '../utils/zod-utils';
+
+export function zodMiddleware(schema: z.ZodType) {
+  return function (req: Request, res: Response, next: NextFunction) {
+    const { error } = schema.safeParse(req.body);
+    if (error)
+      return res.json(
+        handleResposeError(400, {
+          ...ERROR_CONFIG.VALIDATION_ERROR,
+          details: { ...handleZodErrors(error) },
+        }),
+      );
+    next();
+  };
+}
