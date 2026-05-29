@@ -9,11 +9,6 @@ const router = Router();
 
 const tourController = container.resolve(TourController);
 
-router
-  .route('/')
-  .post(
-    zodMiddleware(tourSchema),
-    tourController.createTour.bind(tourController),
-  );
+router.route('/').post(zodMiddleware(tourSchema), tourController.createTour);
 
 export default router;
