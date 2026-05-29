@@ -8,7 +8,7 @@ export class TourController {
   constructor(private readonly tourService: TourService) {}
   createTour = async (req: Request, res: Response) => {
     const createdTour = await this.tourService.createTour(req.body);
-    return res.json({
+    return res.status(201).json({
       status: 'success',
       data: { tour: createdTour },
     });
