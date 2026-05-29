@@ -15,8 +15,3 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use('/tours', tourRouter);
-
-// Routes
-app.get('/', (_req, res) => {
-  res.send('Welcome to the TourSphere API!');
-});
