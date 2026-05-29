@@ -1,8 +1,8 @@
-import './config/db';
+import './config/db.config';
 import 'reflect-metadata';
 
 import { app } from './app';
-import { mongoConnect } from './config/db';
+import { mongoConnect } from './config/db.config';
 import { env } from './lib/env';
 
 async function bootstrap() {
