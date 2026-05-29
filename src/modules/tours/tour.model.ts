@@ -1,6 +1,6 @@
 import { type InferSchemaType, model, Schema } from 'mongoose';
 
-export const tourSchema = new Schema({
+const tourSchema = new Schema({
   name: {
     type: String,
     required: [true, 'Tour name is required'],
