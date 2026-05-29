@@ -7,7 +7,7 @@ import { handleZodErrors } from '../utils/zod-utils';
 
 export function zodMiddleware(schema: z.ZodType) {
   return function (req: Request, res: Response, next: NextFunction) {
-    const { error } = schema.safeParse(req.body);
+    const { error, data } = schema.safeParse(req.body);
     if (error)
       return res.status(400).json(
         handleResposeError(400, {
@@ -15,6 +15,8 @@ export function zodMiddleware(schema: z.ZodType) {
           details: { ...handleZodErrors(error) },
         }),
       );
+
+    req.body = data;
     next();
   };
 }

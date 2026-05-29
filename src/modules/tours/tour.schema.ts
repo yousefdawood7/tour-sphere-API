@@ -13,7 +13,7 @@ export const tourSchema = z.object(
       }),
 
     price: z
-      .number('Price must be a number')
+      .number({ error: 'Price must be a number' })
       .min(10, { error: 'Price must be at least 10$' })
       .pipe(z.coerce.string<number>())
       .optional(),
