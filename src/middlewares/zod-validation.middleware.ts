@@ -22,7 +22,10 @@ export function zodMiddleware(
         }),
       );
 
-    req.body = data;
+    // prettier-ignore
+    if (type === 'body')
+      req.body = data;
+
     next();
   };
 }

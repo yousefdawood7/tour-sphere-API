@@ -1,6 +1,6 @@
 import type { Query } from 'mongoose';
 
-import { SPECIAL_QUERY_FILTERS } from '../config/constants.config';
+import { DEFAULTS, SPECIAL_QUERY_FILTERS } from '../config/constants.config';
 import type { Tour } from '../modules/tours/tour.model';
 import type { QueryString } from '../schemas/query.schema';
 import { splitCommas } from './split-commas';
@@ -33,7 +33,7 @@ export class APIFeatures {
     if (this.queryString.fields)
       this.queryBuilder.select(splitCommas(this.queryString.fields));
 
-    return this.queryBuilder;
+    return this;
   }
 
   sort() {
@@ -42,6 +42,20 @@ export class APIFeatures {
         splitCommas(this.queryString.sort),
       );
 
+    return this;
+  }
+
+  paginate() {
+    const page = this.queryString.page || DEFAULTS.PAGE;
+    const limit = this.queryString.limit || DEFAULTS.LIMIT;
+    const skip = (page - 1) * limit;
+
+    this.queryBuilder = this.queryBuilder.skip(skip).limit(limit);
+
+    return this;
+  }
+
+  get query() {
     return this.queryBuilder;
   }
 }

@@ -14,8 +14,12 @@ export class TourController {
     req: Request<unknown, unknown, unknown, QueryString>,
     res: Response,
   ) => {
-    const query = new APIFeatures(TourModel.find(), req.query).fields().sort();
-    const tours = await query;
+    const features = new APIFeatures(TourModel.find(), req.query)
+      .fields()
+      .sort()
+      .paginate();
+
+    const tours = await features.query;
 
     res.json({
       message: 'success',
