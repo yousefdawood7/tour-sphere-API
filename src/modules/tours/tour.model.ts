@@ -69,6 +69,12 @@ const tourSchema = new Schema({
   createdAt: {
     type: Date,
     default: Date.now(),
+    select: false, // to exclude it from the query's results
+  },
+
+  // Just to exclude the __v special property
+  __v: {
+    type: String,
     select: false,
   },
 });
