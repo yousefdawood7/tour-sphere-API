@@ -2,8 +2,8 @@ import type { Query } from 'mongoose';
 
 import { DEFAULTS, SPECIAL_QUERY_FILTERS } from '../config/constants.config';
 import type { Tour } from '../modules/tours/tour.model';
-import type { QueryString } from '../schemas/query.schema';
 import { splitCommas } from './split-commas';
+import type { QueryString } from './types';
 
 export class APIFeatures {
   private queryObject: Record<string, unknown>;

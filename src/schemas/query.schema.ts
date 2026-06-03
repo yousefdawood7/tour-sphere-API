@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 import { DEFAULTS } from '../config/constants.config';
 
-export const querySchema = z.object({
+export const queryFilterSchema = z.object({
   page: z.coerce
     .number<number>({ error: 'Page query must be a number' })
     .positive({ error: 'Page must be positive number' })
@@ -28,4 +28,4 @@ export const querySchema = z.object({
     .optional(),
 });
 
-export type QueryString = z.infer<typeof querySchema>;
+export type QueryFilter = z.infer<typeof queryFilterSchema>;
