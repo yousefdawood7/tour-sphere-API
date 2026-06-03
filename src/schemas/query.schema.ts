@@ -5,6 +5,7 @@ import { DEFAULTS } from '../config/constants.config';
 export const queryFilterSchema = z.object({
   page: z.coerce
     .number<number>({ error: 'Page query must be a number' })
+    .int({ error: 'Page must be an integer' })
     .positive({ error: 'Page must be positive number' })
     .min(1, { error: 'Page must be at least 1' })
     .default(DEFAULTS.PAGE)
@@ -12,6 +13,7 @@ export const queryFilterSchema = z.object({
 
   limit: z.coerce
     .number<number>({ error: 'Limit query must be a number' })
+    .int({ error: 'Limit must be an integer' })
     .positive({ error: 'Limit must be positive number' })
     .min(1, { error: 'Limit must be at least 1' })
     .default(DEFAULTS.LIMIT)
