@@ -6,7 +6,7 @@ import type { QueryString } from '../schemas/query.schema';
 import { splitCommas } from './split-commas';
 
 export class APIFeatures {
-  private queryObject;
+  private queryObject: Record<string, unknown>;
 
   constructor(
     private queryBuilder: Query<Tour[], Tour>,
@@ -15,9 +15,18 @@ export class APIFeatures {
     this.queryObject = { ...queryString };
     SPECIAL_QUERY_FILTERS.forEach((query) => delete this.queryObject[query]);
 
+    this.queryObject = JSON.parse(
+      JSON.stringify(this.queryObject).replace(
+        /\b(gt|gte|lt|lte)\b/g,
+        (match) => `$${match}`,
+      ),
+    );
+
     // prettier-ignore
     if (!this.queryString.sort)
       this.queryBuilder = this.queryBuilder.sort('-createdAt');
+
+    this.queryBuilder = this.queryBuilder.find(this.queryObject);
   }
 
   fields() {

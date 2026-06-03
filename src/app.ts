@@ -7,6 +7,8 @@ import tourRouter from './modules/tours/tour.routes';
 
 export const app = express();
 
+app.set('query parser', 'extended'); // to parse nested query string objects
+
 // Middleware
 app.use(cors());
 app.use(morgan('dev'));
