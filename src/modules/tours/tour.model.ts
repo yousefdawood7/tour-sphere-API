@@ -52,7 +52,9 @@ const tourSchema = new Schema({
 
   ratings: {
     type: Number,
-    required: [true, 'You must provide a rating'],
+    default: 4,
+    min: [1, 'Rating must be at least 1 star'],
+    max: [5, 'Rating must be below 5 stars'],
   },
 
   imageCover: {

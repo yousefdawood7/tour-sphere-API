@@ -9,6 +9,7 @@
     "start": "node dist/server.js",
     "start:watch": "node --watch dist/server.js",
     "start:dev": "run-p build:watch start:watch",
+    "seed": "tsx src/scripts/seed.ts",
     "lint": "eslint src",
     "lint:fix": "eslint src --fix"
   },

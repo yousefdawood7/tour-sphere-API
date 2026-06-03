@@ -21,5 +21,5 @@ export const tourSchema = z.object({
     .number({
       error: zodIssue('You must provide a rating', 'Ratings must be a number'),
     })
-    .min(1, { error: 'Rating must be at least 1 start' }),
+    .min(1, { error: 'Rating must be at least 1 star' }),
 });
