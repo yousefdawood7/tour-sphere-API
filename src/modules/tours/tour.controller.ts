@@ -1,6 +1,8 @@
 import type { Request, Response } from 'express';
 import { injectable } from 'tsyringe';
 
+import type { QueryString } from '../../schemas/query.schema';
+import { APIFeatures } from '../../utils/api-features';
 import { TourModel } from './tour.model';
 import { TourService } from './tour.service';
 
@@ -8,10 +10,12 @@ import { TourService } from './tour.service';
 export class TourController {
   constructor(private readonly tourService: TourService) {}
 
-  getAllTours = async (req: Request, res: Response) => {
-    console.log(req.query);
-
-    const tours = await TourModel.find();
+  getAllTours = async (
+    req: Request<unknown, unknown, unknown, QueryString>,
+    res: Response,
+  ) => {
+    const query = new APIFeatures(TourModel.find(), req.query).sort();
+    const tours = await query;
 
     res.json({
       message: 'success',

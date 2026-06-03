@@ -27,3 +27,5 @@ export const querySchema = z.object({
     .min(3, { error: 'Field value must be at least 3 characters' })
     .optional(),
 });
+
+export type QueryString = z.infer<typeof querySchema>;
