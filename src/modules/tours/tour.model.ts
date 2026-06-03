@@ -5,14 +5,78 @@ const tourSchema = new Schema({
     type: String,
     required: [true, 'Tour name is required'],
     unique: true,
+    trim: true,
+  },
+
+  summary: {
+    type: String,
+    trim: true,
+    required: [true, 'Tour must have a description'],
+  },
+
+  description: {
+    type: String,
+    trim: true,
+  },
+
+  price: Number,
+
+  priceDiscount: Number,
+
+  duration: {
+    type: Number,
+    required: [true, 'Tour must have a duration'],
+  },
+
+  maxGroupSize: {
+    type: Number,
+    required: [true, 'Tour must have a group size'],
+  },
+
+  difficulty: {
+    type: String,
+    required: [true, 'Tour must have a difficulty'],
+  },
+
+  ratingsAverage: {
+    type: Number,
+    default: 4.5,
+    min: [1, 'Rating must be above 1.0'],
+    max: [5, 'Rating must be below 5.0'],
+  },
+
+  ratingsQuantity: {
+    type: Number,
+    default: 0,
   },
 
   ratings: {
     type: Number,
-    required: [true, 'You must provide a rating'],
+    default: 4,
+    min: [1, 'Rating must be at least 1 star'],
+    max: [5, 'Rating must be below 5 stars'],
   },
 
-  price: Number,
+  imageCover: {
+    type: String,
+    required: [true, 'Tour must have a cover image'],
+  },
+
+  images: [String],
+
+  startDates: [Date],
+
+  createdAt: {
+    type: Date,
+    default: Date.now(),
+    select: false, // to exclude it from the query's results
+  },
+
+  // Just to exclude the __v special property
+  __v: {
+    type: String,
+    select: false,
+  },
 });
 
 export type Tour = InferSchemaType<typeof tourSchema>;
