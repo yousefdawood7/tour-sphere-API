@@ -22,3 +22,11 @@ export const tourSchema = z.object({
     })
     .min(1, { error: 'Rating must be at least 1 star' }),
 });
+
+export const tourParamSchema = z.object({
+  id: z
+    .string({
+      error: 'Tour id is required',
+    })
+    .min(3, { error: 'Tour id must be at least 3 characters' }),
+});
