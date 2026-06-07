@@ -21,7 +21,7 @@ export class TourService {
     const features = new APIFeatures(
       TourModel.find({ _id: tourId }),
       queryObject,
-    ).limit();
+    );
 
     const tour = await features.query;
 

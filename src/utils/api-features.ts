@@ -25,8 +25,11 @@ export class APIFeatures {
     // prettier-ignore
     if (!this.queryString.sort)
       this.queryBuilder = this.queryBuilder.sort('-createdAt');
+  }
 
+  limit() {
     this.queryBuilder = this.queryBuilder.find(this.queryObject);
+    return this;
   }
 
   fields() {
