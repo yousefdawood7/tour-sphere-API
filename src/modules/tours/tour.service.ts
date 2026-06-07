@@ -21,11 +21,34 @@ export class TourService {
     const features = new APIFeatures(
       TourModel.find({ _id: tourId }),
       queryObject,
-    );
+    ).fields();
 
-    const tour = await features.query;
+    const tour = (await features.query)[0];
 
     return tour;
+  }
+
+  async tourStats() {
+    const tourStats = await TourModel.aggregate([
+      {
+        $group: {
+          _id: null,
+          numberOfTours: { $sum: 1 },
+          minPrice: { $min: '$price' },
+          maxPrice: { $max: '$price' },
+          avgPrice: { $avg: '$price' },
+          avgRatings: { $avg: '$ratingsAverage' },
+          numRatings: { $sum: '$ratingsQuantity' },
+        },
+      },
+      {
+        $sort: {
+          price: 1,
+        },
+      },
+    ]);
+
+    return tourStats;
   }
 
   async createTour(body: Tour) {

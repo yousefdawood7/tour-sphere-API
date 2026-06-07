@@ -13,10 +13,18 @@ const tourController = container.resolve(TourController);
 router
   .route('/')
   .get(zodMiddleware(queryFilterSchema, 'query'), tourController.getAllTours)
-  .post(zodMiddleware(tourSchema), tourController.createTour);
+  .post(zodMiddleware(tourSchema, 'body'), tourController.createTour);
+
+router.route('/stats').get(tourController.getTourStats);
 
 router
   .route('/:id')
-  .get(zodMiddleware(tourParamSchema), tourController.getTourById);
+  .get(
+    [
+      zodMiddleware(tourParamSchema, 'params'),
+      zodMiddleware(queryFilterSchema, 'query'),
+    ],
+    tourController.getTourById,
+  );
 
 export default router;

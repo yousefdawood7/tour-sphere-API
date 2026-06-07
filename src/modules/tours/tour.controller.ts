@@ -35,6 +35,17 @@ export class TourController {
     });
   };
 
+  getTourStats = async (_req: Request, res: Response) => {
+    const stats = await this.tourService.tourStats();
+
+    return res.json({
+      message: 'success',
+      data: {
+        stats,
+      },
+    });
+  };
+
   createTour = async (req: Request, res: Response) => {
     const createdTour = await this.tourService.createTour(req.body);
     return res.status(201).json({

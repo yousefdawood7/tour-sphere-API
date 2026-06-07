@@ -7,10 +7,7 @@ import { handleZodErrors } from '../utils/zod-utils';
 
 type ValidationType = 'body' | 'params' | 'query';
 
-export function zodMiddleware(
-  schema: z.ZodType,
-  type: ValidationType = 'body',
-) {
+export function zodMiddleware(schema: z.ZodType, type: ValidationType) {
   return function (req: Request, res: Response, next: NextFunction) {
     const { error, data } = schema.safeParse(req[type]);
 
