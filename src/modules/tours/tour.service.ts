@@ -51,6 +51,56 @@ export class TourService {
     return tourStats;
   }
 
+  async getBusiestMonth(year: number) {
+    const months = await TourModel.aggregate([
+      {
+        $unwind: {
+          path: '$startDates',
+        },
+      },
+      {
+        $match: {
+          startDates: {
+            $gte: new Date(`${year}-01-01`),
+            $lte: new Date(`${year}-12-31`),
+          },
+        },
+      },
+      {
+        $group: {
+          _id: {
+            month: {
+              $month: '$startDates',
+            },
+          },
+          numberOfTours: {
+            $sum: 1,
+          },
+          tours: {
+            $push: '$name',
+          },
+        },
+      },
+      {
+        $set: {
+          month: '$_id.month',
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+        },
+      },
+      {
+        $sort: {
+          month: -1,
+        },
+      },
+    ]);
+
+    return months;
+  }
+
   async createTour(body: Tour) {
     return TourModel.create({
       ...body,

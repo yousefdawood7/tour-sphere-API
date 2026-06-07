@@ -46,6 +46,19 @@ export class TourController {
     });
   };
 
+  getBusiestMonth = async (req: Request, res: Response) => {
+    const year = +req.params.year! as number;
+
+    const busiestTours = await this.tourService.getBusiestMonth(year);
+
+    return res.json({
+      message: 'success',
+      data: {
+        plans: busiestTours,
+      },
+    });
+  };
+
   createTour = async (req: Request, res: Response) => {
     const createdTour = await this.tourService.createTour(req.body);
     return res.status(201).json({

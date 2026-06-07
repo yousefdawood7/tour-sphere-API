@@ -4,7 +4,11 @@ import { container } from 'tsyringe';
 import { zodMiddleware } from '../../middlewares/zod-validation.middleware';
 import { queryFilterSchema } from '../../schemas/query.schema';
 import { TourController } from './tour.controller';
-import { tourParamSchema, tourSchema } from './tour.schema';
+import {
+  tourIdParamSchema,
+  tourSchema,
+  tourYearParamScheam,
+} from './tour.schema';
 
 const router = Router();
 
@@ -21,10 +25,17 @@ router
   .route('/:id')
   .get(
     [
-      zodMiddleware(tourParamSchema, 'params'),
+      zodMiddleware(tourIdParamSchema, 'params'),
       zodMiddleware(queryFilterSchema, 'query'),
     ],
     tourController.getTourById,
+  );
+
+router
+  .route('/busiest/:year')
+  .get(
+    [zodMiddleware(tourYearParamScheam, 'params')],
+    tourController.getBusiestMonth,
   );
 
 export default router;
