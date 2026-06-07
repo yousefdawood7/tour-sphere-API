@@ -5,7 +5,7 @@ import { ERROR_CONFIG } from '../config/error.config';
 import { handleResposeError } from '../utils/handle-response';
 import { handleZodErrors } from '../utils/zod-utils';
 
-type ValidationType = 'body' | 'query';
+type ValidationType = 'body' | 'params' | 'query';
 
 export function zodMiddleware(
   schema: z.ZodType,
