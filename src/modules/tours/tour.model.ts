@@ -1,3 +1,4 @@
+import type { Query } from 'mongoose';
 import { type InferSchemaType, model, Schema } from 'mongoose';
 import slugify from 'slugify';
 
@@ -103,15 +104,17 @@ const tourSchema = new Schema(
 );
 
 tourSchema.virtual('durationWeeks').get(function () {
-  return Math.floor(this.duration / 7);
+  // prettier-ignore
+  if (this.duration)
+    return Math.floor(this.duration / 7);
 });
 
 tourSchema.pre('save', function () {
   this.slug = slugify(this.name, { lower: true });
 });
 
-tourSchema.pre('find', function () {
-  this.where({ secret: false });
+tourSchema.pre(/^find/, function (this: Query<Tour, Tour[]>) {
+  this.where({ secret: { $ne: true } });
 });
 
 export type Tour = InferSchemaType<typeof tourSchema>;
