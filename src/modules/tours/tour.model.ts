@@ -65,6 +65,11 @@ const tourSchema = new Schema(
 
     images: [String],
 
+    createdAt: {
+      type: Date,
+      select: false,
+    },
+
     startDates: [Date],
 
     // Just to exclude the __v special property
@@ -74,12 +79,24 @@ const tourSchema = new Schema(
     },
   },
   {
+    toJSON: {
+      virtuals: true,
+    },
+
+    toObject: {
+      virtuals: true,
+    },
+
     timestamps: {
       createdAt: true,
       updatedAt: false,
     },
   },
 );
+
+tourSchema.virtual('durationWeeks').get(function () {
+  return Math.floor(this.duration / 7);
+});
 
 export type Tour = InferSchemaType<typeof tourSchema>;
 
