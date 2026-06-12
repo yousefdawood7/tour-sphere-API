@@ -15,6 +15,11 @@ export const toursSummaryPipeline = [
       price: 1,
     },
   },
+  {
+    $project: {
+      _id: 0,
+    },
+  },
 ] as const;
 
 export const busiestToursPipeline = (year: number) =>
