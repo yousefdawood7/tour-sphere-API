@@ -10,7 +10,7 @@ const tourSchema = new Schema(
       trim: true,
     },
 
-    slug: true,
+    slug: String,
 
     summary: {
       type: String,
@@ -103,7 +103,6 @@ tourSchema.virtual('durationWeeks').get(function () {
 
 tourSchema.pre('save', function () {
   this.slug = slugify(this.name, { lower: true });
-  console.log('AYOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO');
 });
 
 export type Tour = InferSchemaType<typeof tourSchema>;
