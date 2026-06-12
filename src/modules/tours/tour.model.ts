@@ -117,6 +117,14 @@ tourSchema.pre(/^find/, function (this: Query<Tour, Tour[]>) {
   this.where({ secret: { $ne: true } });
 });
 
+tourSchema.pre('aggregate', function () {
+  this.pipeline().unshift({
+    $match: {
+      secret: { $ne: true },
+    },
+  });
+});
+
 export type Tour = InferSchemaType<typeof tourSchema>;
 
 export const TourModel = model('Tour', tourSchema);
