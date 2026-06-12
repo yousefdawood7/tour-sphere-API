@@ -23,6 +23,11 @@ const tourSchema = new Schema(
       trim: true,
     },
 
+    secret: {
+      type: Boolean,
+      default: false,
+    },
+
     price: Number,
 
     priceDiscount: Number,
@@ -103,6 +108,10 @@ tourSchema.virtual('durationWeeks').get(function () {
 
 tourSchema.pre('save', function () {
   this.slug = slugify(this.name, { lower: true });
+});
+
+tourSchema.pre('find', function () {
+  this.where({ secret: false });
 });
 
 export type Tour = InferSchemaType<typeof tourSchema>;
