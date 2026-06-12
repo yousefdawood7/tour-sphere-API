@@ -1,4 +1,6 @@
+import type { Query } from 'mongoose';
 import { type InferSchemaType, model, Schema } from 'mongoose';
+import slugify from 'slugify';
 
 const tourSchema = new Schema(
   {
@@ -9,10 +11,12 @@ const tourSchema = new Schema(
       trim: true,
     },
 
+    slug: String,
+
     summary: {
       type: String,
       trim: true,
-      required: [true, 'Tour must have a description'],
+      required: [true, 'Tour must have a summary'],
     },
 
     description: {
@@ -20,9 +24,27 @@ const tourSchema = new Schema(
       trim: true,
     },
 
-    price: Number,
+    secret: {
+      type: Boolean,
+      default: false,
+    },
 
-    priceDiscount: Number,
+    price: {
+      type: Number,
+      min: [10, 'Price must be at least 10$'],
+    },
+
+    priceDiscount: {
+      type: Number,
+      min: [1, 'Discount must be at least 1$'],
+
+      validate: {
+        validator: function (this, val: number) {
+          return (this.price as number) > val;
+        },
+        message: 'Price discount ({VALUE}) must be less than the price',
+      },
+    },
 
     duration: {
       type: Number,
@@ -65,12 +87,12 @@ const tourSchema = new Schema(
 
     images: [String],
 
-    startDates: [Date],
-
     createdAt: {
       type: Date,
-      select: false, // to exclude it from the query's results
+      select: false,
     },
+
+    startDates: [Date],
 
     // Just to exclude the __v special property
     __v: {
@@ -79,12 +101,42 @@ const tourSchema = new Schema(
     },
   },
   {
+    toJSON: {
+      virtuals: true,
+    },
+
+    toObject: {
+      virtuals: true,
+    },
+
     timestamps: {
       createdAt: true,
       updatedAt: false,
     },
   },
 );
+
+tourSchema.virtual('durationWeeks').get(function () {
+  // prettier-ignore
+  if (this.duration)
+    return Math.floor(this.duration / 7);
+});
+
+tourSchema.pre('save', function () {
+  this.slug = slugify(this.name, { lower: true });
+});
+
+tourSchema.pre(/^find/, function (this: Query<Tour, Tour[]>) {
+  this.where({ secret: { $ne: true } });
+});
+
+tourSchema.pre('aggregate', function () {
+  this.pipeline().unshift({
+    $match: {
+      secret: { $ne: true },
+    },
+  });
+});
 
 export type Tour = InferSchemaType<typeof tourSchema>;
 
