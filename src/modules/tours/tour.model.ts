@@ -1,4 +1,5 @@
 import { type InferSchemaType, model, Schema } from 'mongoose';
+import slugify from 'slugify';
 
 const tourSchema = new Schema(
   {
@@ -8,6 +9,8 @@ const tourSchema = new Schema(
       unique: true,
       trim: true,
     },
+
+    slug: true,
 
     summary: {
       type: String,
@@ -96,6 +99,11 @@ const tourSchema = new Schema(
 
 tourSchema.virtual('durationWeeks').get(function () {
   return Math.floor(this.duration / 7);
+});
+
+tourSchema.pre('save', function () {
+  this.slug = slugify(this.name, { lower: true });
+  console.log('AYOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO');
 });
 
 export type Tour = InferSchemaType<typeof tourSchema>;
