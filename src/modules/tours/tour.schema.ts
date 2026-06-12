@@ -101,7 +101,7 @@ export const tourSchema = z.object({
     .optional(),
 
   startDates: z
-    .array(z.date({ error: 'Tour start date must be a valid date' }), {
+    .array(z.coerce.date({ error: 'Tour start date must be a valid date' }), {
       error: 'Start dates must be an array',
     })
     .optional(),
