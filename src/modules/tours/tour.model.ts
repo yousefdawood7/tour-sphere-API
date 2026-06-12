@@ -29,9 +29,22 @@ const tourSchema = new Schema(
       default: false,
     },
 
-    price: Number,
+    price: {
+      type: Number,
+      min: [10, 'Price must be at least 10$'],
+    },
 
-    priceDiscount: Number,
+    priceDiscount: {
+      type: Number,
+      min: [1, 'Discount must be at least 1$'],
+
+      validate: {
+        validator: function (this, val: number) {
+          return (this.price as number) > val;
+        },
+        message: 'Price discount ({VALUE}) must be less than the price',
+      },
+    },
 
     duration: {
       type: Number,
