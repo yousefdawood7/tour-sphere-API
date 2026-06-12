@@ -12,7 +12,7 @@ const tourSchema = new Schema(
     summary: {
       type: String,
       trim: true,
-      required: [true, 'Tour must have a description'],
+      required: [true, 'Tour must have a summary'],
     },
 
     description: {
