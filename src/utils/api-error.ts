@@ -1,13 +1,13 @@
 export class APIError extends Error {
-  private status: 'fail' | 'error';
-  private statusCode: number;
-
-  constructor(message: string, statusCode: number) {
+  constructor(
+    public readonly message: string,
+    public readonly statusCode: number = 500,
+    public readonly details: Record<string, unknown> = {},
+    public readonly status: 'fail' | 'error' = statusCode < 500
+      ? 'fail'
+      : 'error',
+  ) {
     super(message);
-
-    this.status = statusCode < 500 ? 'fail' : 'error';
-    this.statusCode = statusCode;
-
     Error.captureStackTrace(this, this.constructor);
   }
 }

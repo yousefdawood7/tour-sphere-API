@@ -3,6 +3,7 @@ import express from 'express';
 import helmet from 'helmet';
 import morgan from 'morgan';
 
+import { globalErrorMiddleware } from './middlewares/global-error.middleware';
 import tourRouter from './modules/tours/tour.routes';
 
 export const app = express();
@@ -17,3 +18,5 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use('/tours', tourRouter);
+
+app.use(globalErrorMiddleware);
