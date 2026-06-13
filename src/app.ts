@@ -5,6 +5,7 @@ import morgan from 'morgan';
 
 import { globalErrorMiddleware } from './middlewares/global-error.middleware';
 import tourRouter from './modules/tours/tour.routes';
+import { APIError } from './utils/api-error';
 
 export const app = express();
 
@@ -18,5 +19,14 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use('/tours', tourRouter);
+
+app.all('/{*splat}', (req, _res, next) => {
+  next(
+    new APIError(
+      `The requested page (${req.originalUrl}) could not be found`,
+      404,
+    ),
+  );
+});
 
 app.use(globalErrorMiddleware);
