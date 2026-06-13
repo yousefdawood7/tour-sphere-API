@@ -1,13 +1,15 @@
 export class APIError extends Error {
+  public isOperational = true;
+  public status: 'fail' | 'error';
+
   constructor(
     public readonly message: string,
-    public readonly statusCode: number = 500,
+    public readonly statusCode: number,
     public readonly details: Record<string, unknown> = {},
-    public readonly status: 'fail' | 'error' = statusCode < 500
-      ? 'fail'
-      : 'error',
   ) {
     super(message);
+
+    this.status = this.statusCode < 500 ? 'fail' : 'fail';
     Error.captureStackTrace(this, this.constructor);
   }
 }

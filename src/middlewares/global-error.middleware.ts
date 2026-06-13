@@ -16,7 +16,7 @@ export function globalErrorMiddleware(
   if (env.APP_STAGE === 'dev')
     return res.status(statusCode).json({
       status,
-      message: err.message,
+      message: err.message || 'Something went wrong',
 
       //! for handling non APIError instance
       ...((err.details instanceof Object
@@ -26,13 +26,19 @@ export function globalErrorMiddleware(
       stack: err.stack,
     });
 
-  res.status(statusCode).json({
-    status,
-    message: err.message,
+  if (err.isOperational)
+    return res.status(statusCode).json({
+      status,
+      message: err.message,
 
-    //! for handling non APIError instance
-    ...((err.details instanceof Object
-      ? Object.values(err.details).length
-      : false) && { details: err.details }),
+      ...(Object.values(err.details).length && { details: err.details }),
+    });
+
+  //! because non operational errors won't have any status or status code so we pre-define it
+  res.status(500).json({
+    status: 'error',
+    statusCode: 500,
+
+    message: err.message || 'Something went wrong',
   });
 }
