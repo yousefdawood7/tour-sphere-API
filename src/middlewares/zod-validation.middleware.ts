@@ -2,7 +2,7 @@ import type { NextFunction, Request, Response } from 'express';
 import { z } from 'zod';
 
 import { ERROR_CONFIG } from '../config/error.config';
-import { handleResposeError } from '../utils/handle-response';
+import { APIError } from '../utils/api-error';
 import { handleZodErrors } from '../utils/zod-utils';
 
 type ValidationType = 'body' | 'params' | 'query';
@@ -12,11 +12,12 @@ export function zodMiddleware(schema: z.ZodType, type: ValidationType) {
     const { error, data } = schema.safeParse(req[type]);
 
     if (error)
-      return res.status(400).json(
-        handleResposeError(400, {
-          ...ERROR_CONFIG.VALIDATION_ERROR,
-          details: { ...handleZodErrors(error) },
-        }),
+      return next(
+        new APIError(
+          ERROR_CONFIG.VALIDATION_ERROR.message,
+          400,
+          handleZodErrors(error),
+        ),
       );
 
     // prettier-ignore
