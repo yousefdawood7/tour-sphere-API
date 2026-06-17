@@ -2,6 +2,8 @@ import type { Query } from 'mongoose';
 import { type InferSchemaType, model, Schema } from 'mongoose';
 import slugify from 'slugify';
 
+import { handleCustomError } from '../../config/error-codes.config';
+
 const tourSchema = new Schema(
   {
     name: {
@@ -136,6 +138,11 @@ tourSchema.pre('aggregate', function () {
       secret: { $ne: true },
     },
   });
+});
+
+tourSchema.post('save', { errorHandler: true }, function (error, _doc, next) {
+  const apiError = handleCustomError(error);
+  next(apiError);
 });
 
 export type Tour = InferSchemaType<typeof tourSchema>;
