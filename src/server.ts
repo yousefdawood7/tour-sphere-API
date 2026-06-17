@@ -8,8 +8,16 @@ import { env } from './lib/env';
 async function bootstrap() {
   await mongoConnect();
 
-  app.listen(env.PORT, () => {
+  const server = app.listen(env.PORT, () => {
     console.log(`Server is running on port ${env.PORT}`);
+  });
+
+  process.on('unhandledRejection', (err) => {
+    console.error('🚨 Unhandled Rejection at:', err);
+
+    server.close(() => {
+      process.exit(1);
+    });
   });
 }
 

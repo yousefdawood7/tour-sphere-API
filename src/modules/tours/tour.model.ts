@@ -141,7 +141,7 @@ tourSchema.pre('aggregate', function () {
 });
 
 tourSchema.post(
-  /^find|save/,
+  /^(find|save)/,
   { errorHandler: true },
   function (error, _doc, next) {
     const apiError = handleCustomError(error);
