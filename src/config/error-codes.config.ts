@@ -21,11 +21,11 @@ type CustomErrorTypes = {
   };
 };
 
-export const handleCustomError = function (error: any): APIError {
+export const handleCustomError = function (error: any): APIError | Error {
   if (error.name === 'ValidationError')
     return validationError<CustomErrorTypes['ValidationError']>(error);
 
-  return new APIError(error.message, 200);
+  return new Error('Unhandled Error Exception');
 };
 
 const validationError = function <
