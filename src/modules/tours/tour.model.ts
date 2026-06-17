@@ -140,10 +140,14 @@ tourSchema.pre('aggregate', function () {
   });
 });
 
-tourSchema.post('save', { errorHandler: true }, function (error, _doc, next) {
-  const apiError = handleCustomError(error);
-  next(apiError);
-});
+tourSchema.post(
+  /^find|save/,
+  { errorHandler: true },
+  function (error, _doc, next) {
+    const apiError = handleCustomError(error);
+    next(apiError);
+  },
+);
 
 export type Tour = InferSchemaType<typeof tourSchema>;
 

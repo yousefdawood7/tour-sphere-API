@@ -2,14 +2,6 @@
 
 import { APIError } from '../utils/api-error';
 
-type ErrorCodeKey = string | number;
-
-type ErrorCodeValue = <
-  TCustomError extends CustomErrorTypes[keyof CustomErrorTypes],
->(
-  error: TCustomError,
-) => APIError;
-
 type CustomErrorTypes = {
   ValidationError: {
     _message: string;
@@ -19,18 +11,20 @@ type CustomErrorTypes = {
       };
     };
   };
+
+  InvalidDocumentId: {
+    message: string;
+  };
 };
 
 export const handleCustomError = function (error: any): APIError | Error {
-  if (error.name === 'ValidationError')
-    return validationError<CustomErrorTypes['ValidationError']>(error);
+  if (error.name === 'ValidationError') return validationError(error);
+  if (error.name === 'CastError') return invalidDocumentId();
 
   return new Error('Unhandled Error Exception');
 };
 
-const validationError = function <
-  TCustomError extends CustomErrorTypes['ValidationError'],
->(error: TCustomError) {
+const validationError = function (error: CustomErrorTypes['ValidationError']) {
   const errorDetails: Record<string, unknown> = {};
 
   for (const key in error.errors) {
@@ -40,9 +34,9 @@ const validationError = function <
   return new APIError(error['_message'], 400, errorDetails);
 };
 
-const codes = [['ValidationError', validationError]] as const satisfies [
-  ErrorCodeKey,
-  ErrorCodeValue,
-][];
-
-export const errorCodes = new Map<ErrorCodeKey, ErrorCodeValue>(codes);
+const invalidDocumentId = function () {
+  return new APIError(
+    'The provided document ID is invalid. Please provide a valid ObjectId.',
+    400,
+  );
+};
