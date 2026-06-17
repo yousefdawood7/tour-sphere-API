@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+import { env } from '../lib/env';
 import { APIError } from '../utils/api-error';
 
 type CustomErrorTypes = {
@@ -12,16 +13,26 @@ type CustomErrorTypes = {
     };
   };
 
+  DuplicateEntriesError: {
+    keyValue: {
+      name: string;
+    };
+  };
+
   InvalidDocumentId: {
     message: string;
   };
 };
 
-export const handleCustomError = function (error: any): APIError | Error {
+export const handleCustomError = function (
+  error: any,
+): APIError | Error | undefined {
   if (error.name === 'ValidationError') return validationError(error);
   if (error.name === 'CastError') return invalidDocumentId();
+  if (error.code === 11000) return duplicateEntriesError(error);
 
-  return new Error('Unhandled Error Exception');
+  if (env.APP_STAGE === 'production')
+    return new Error('Unhandled Error Exception');
 };
 
 const validationError = function (error: CustomErrorTypes['ValidationError']) {
@@ -34,9 +45,18 @@ const validationError = function (error: CustomErrorTypes['ValidationError']) {
   return new APIError(error['_message'], 400, errorDetails);
 };
 
-const invalidDocumentId = function () {
+const invalidDocumentId = () => {
   return new APIError(
     'The provided document ID is invalid. Please provide a valid ObjectId.',
     400,
+  );
+};
+
+const duplicateEntriesError = (
+  error: CustomErrorTypes['DuplicateEntriesError'],
+) => {
+  return new APIError(
+    `A document with the name "${error.keyValue.name}" already exists.`,
+    409,
   );
 };
