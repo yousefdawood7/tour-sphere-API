@@ -35,10 +35,19 @@ export const handleCustomError = function (
     return new Error('Unhandled Error Exception');
 };
 
+const handlePasswordErrorOptions = (passwordError: string) =>
+  passwordError.split(', ');
+
 const validationError = function (error: CustomErrorTypes['ValidationError']) {
   const errorDetails: Record<string, unknown> = {};
 
   for (const key in error.errors) {
+    if (key === 'password' && error.errors[key]?.message) {
+      errorDetails[key] = handlePasswordErrorOptions(
+        error.errors[key]?.message,
+      );
+      continue;
+    }
     errorDetails[key] = error.errors[key]?.message;
   }
 
@@ -56,7 +65,7 @@ const duplicateEntriesError = (
   error: CustomErrorTypes['DuplicateEntriesError'],
 ) => {
   return new APIError(
-    `A document with the name "${error.keyValue.name}" already exists.`,
+    `A document with the name ${Object.values(error.keyValue)[0]} already exists.`,
     409,
   );
 };

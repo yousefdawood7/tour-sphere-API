@@ -4,6 +4,7 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 
 import { globalErrorMiddleware } from './middlewares/global-error.middleware';
+import authRouter from './modules/auth/auth.routes';
 import tourRouter from './modules/tours/tour.routes';
 import { APIError } from './utils/api-error';
 
@@ -19,6 +20,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use('/tours', tourRouter);
+app.use('/auth', authRouter);
 
 app.all('/{*splat}', (req, _res, next) => {
   next(

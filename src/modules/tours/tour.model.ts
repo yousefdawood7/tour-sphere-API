@@ -98,7 +98,7 @@ const tourSchema = new Schema(
 
     // Just to exclude the __v special property
     __v: {
-      type: String,
+      type: Number,
       select: false,
     },
   },
@@ -150,5 +150,4 @@ tourSchema.post(
 );
 
 export type Tour = InferSchemaType<typeof tourSchema>;
-
 export const TourModel = model('Tour', tourSchema);

@@ -20,6 +20,16 @@ export const env = createEnv({
     DATABASE_NAME: z.string().min(3).max(128),
     DATABASE_PASSWORD: z.string().min(3).max(128),
     DATABASE_URL: z.url(),
+
+    BCRYPT_ROUNDS: z.coerce.number().min(12).max(31).default(12),
+    JWT_SECRET: z.string().min(32).max(256),
+    JWT_EXPIRES_IN: z.union([
+      z.number().positive(), // Representing seconds (e.g., 3600 for 1 hour)
+      z
+        .string()
+        .regex(/^\d+(s|m|h|d|w|y)$/)
+        .default('1d'), // Representing timespan (e.g., "1h", "7d", "30m")
+    ]),
   },
 
   runtimeEnv: process.env,
