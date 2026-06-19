@@ -1,5 +1,6 @@
 import { injectable } from 'tsyringe';
 
+import { JwtToken } from '../../utils/jwt-token';
 import { type User, UserModel } from './auth.model';
 
 @injectable()
@@ -14,6 +15,8 @@ export class AuthService {
 
     const newUser = await UserModel.create(body);
 
-    return newUser;
+    const token = await JwtToken.signToken({ id: newUser.id });
+
+    return { token, user: newUser };
   };
 }

@@ -15,12 +15,17 @@ export class AuthController {
     if (!newUser)
       return next(new APIError('Email already exist', 409));
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { __v, password, ...serializedUser } = newUser.user.toJSON();
+
     res.status(201).json({
       status: 'success',
+      message: 'User created successfully',
+      token: newUser.token,
       statusCode: 201,
 
       details: {
-        user: newUser,
+        user: serializedUser,
       },
     });
   };
