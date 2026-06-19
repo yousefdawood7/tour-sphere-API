@@ -14,16 +14,7 @@ export const passwordSchema = z
     error: zodIssue('Password is required', 'Password must be string'),
   })
   .min(1, { error: 'Password is required' })
-  .min(8, { error: 'Password must be at least 8 characters long' })
-  .regex(/[A-Z]/, {
-    error: 'Password must contain at least one uppercase letter',
-  })
-  .regex(/[a-z]/, {
-    error: 'Password must contain at least one lowercase letter',
-  })
-  .regex(/\d/, {
-    error: 'Password must contain at least one number',
-  });
+  .min(8, { error: 'Password must be at least 8 characters long' });
 
 export const signupSchema = z
   .object({
@@ -37,7 +28,17 @@ export const signupSchema = z
 
     avatar: z.url({ error: 'Avatar url should be string' }).optional(),
 
-    password: passwordSchema,
+    password: passwordSchema
+      .regex(/[A-Z]/, {
+        error: 'Password must contain at least one uppercase letter',
+      })
+      .regex(/[a-z]/, {
+        error: 'Password must contain at least one lowercase letter',
+      })
+      .regex(/\d/, {
+        error: 'Password must contain at least one number',
+      }),
+
     confirmPassword: z
       .string({ error: 'Please confirm your password' })
       .min(1, 'Please confirm your password'),

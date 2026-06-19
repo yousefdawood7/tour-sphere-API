@@ -3,7 +3,7 @@ import { container } from 'tsyringe';
 
 import { zodMiddleware } from '../../middlewares/zod-validation.middleware';
 import { AuthController } from './auth.controller';
-import { signupSchema } from './auth.schema';
+import { loginSchema, signupSchema } from './auth.schema';
 
 const router = Router();
 
@@ -14,5 +14,7 @@ router.post(
   zodMiddleware(signupSchema, 'body'),
   authController.signup,
 );
+
+router.post('/login', zodMiddleware(loginSchema, 'body'), authController.login);
 
 export default router;

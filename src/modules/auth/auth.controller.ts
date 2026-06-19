@@ -29,4 +29,17 @@ export class AuthController {
       },
     });
   };
+
+  login = async (req: Request, res: Response, next: NextFunction) => {
+    const loggedInUser = await this.authService.login(req.body);
+
+    if (loggedInUser.error)
+      return next(new APIError(loggedInUser.message, loggedInUser.statusCode));
+
+    return res.status(loggedInUser.statusCode).json({
+      status: 'success',
+      statusCode: loggedInUser.statusCode,
+      token: loggedInUser.token,
+    });
+  };
 }
