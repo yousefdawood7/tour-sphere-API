@@ -80,7 +80,7 @@ export const userSchema = new Schema(
     },
 
     __v: {
-      type: String,
+      type: Number,
       select: false,
     },
   },
