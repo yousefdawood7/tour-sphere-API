@@ -56,7 +56,7 @@ const duplicateEntriesError = (
   error: CustomErrorTypes['DuplicateEntriesError'],
 ) => {
   return new APIError(
-    `A document with the name "${error.keyValue.name}" already exists.`,
+    `A document with the name ${Object.values(error.keyValue)[0]} already exists.`,
     409,
   );
 };
