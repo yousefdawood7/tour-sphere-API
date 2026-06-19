@@ -150,5 +150,4 @@ tourSchema.post(
 );
 
 export type Tour = InferSchemaType<typeof tourSchema>;
-
 export const TourModel = model('Tour', tourSchema);

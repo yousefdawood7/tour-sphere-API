@@ -20,6 +20,9 @@ export const env = createEnv({
     DATABASE_NAME: z.string().min(3).max(128),
     DATABASE_PASSWORD: z.string().min(3).max(128),
     DATABASE_URL: z.url(),
+
+    BCRYPT_ROUNDS: z.coerce.number().min(12).max(128).default(12),
+    JWT_SECRET: z.string().min(32).max(256),
   },
 
   runtimeEnv: process.env,
