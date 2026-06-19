@@ -4,7 +4,7 @@ import { zodIssue } from '../../utils/zod-utils';
 
 export const signupSchema = z
   .object({
-    emai: z
+    email: z
       .string({
         error: zodIssue('Email is required', 'Email should be string'),
       })
@@ -19,8 +19,10 @@ export const signupSchema = z
 
     avatar: z.url({ error: 'Avatar url should be string' }).optional(),
 
-    password: z.coerce
-      .string({ error: 'Password is required' })
+    password: z
+      .string({
+        error: zodIssue('Password is required', 'Password must be string'),
+      })
       .min(1, { error: 'Password is required' })
       .min(8, { error: 'Password must be at least 8 characters long' })
       .regex(/[A-Z]/, {
