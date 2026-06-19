@@ -35,10 +35,19 @@ export const handleCustomError = function (
     return new Error('Unhandled Error Exception');
 };
 
+const handlePasswordErrorOptions = (passwordError: string) =>
+  passwordError.split(', ');
+
 const validationError = function (error: CustomErrorTypes['ValidationError']) {
   const errorDetails: Record<string, unknown> = {};
 
   for (const key in error.errors) {
+    if (key === 'password' && error.errors[key]?.message) {
+      errorDetails[key] = handlePasswordErrorOptions(
+        error.errors[key]?.message,
+      );
+      continue;
+    }
     errorDetails[key] = error.errors[key]?.message;
   }
 

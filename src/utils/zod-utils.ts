@@ -6,12 +6,18 @@ export const zodIssue = function (requiredMsg: string, typeMsg: string) {
 };
 
 export const handleZodErrors = function (zodError: z.ZodError) {
-  const errorObjects: Record<string, string> = {};
+  const errorObjects: Record<string, string | string[]> = {};
 
-  Object.entries(z.flattenError<unknown>(zodError).fieldErrors).forEach(
-    (fieldError) =>
-      (errorObjects[fieldError[0]] = (fieldError[1] as string[])[0] as string), // to get first error from the zod error
-  );
+  const fieldErrorsObject = z.flattenError(zodError).fieldErrors as {
+    [key: string]: string[];
+  };
+
+  for (const key in fieldErrorsObject) {
+    errorObjects[key] =
+      fieldErrorsObject[key]!.length > 1
+        ? fieldErrorsObject[key]!
+        : fieldErrorsObject[key]![0]!;
+  }
 
   return { fieldErrors: errorObjects };
 };
