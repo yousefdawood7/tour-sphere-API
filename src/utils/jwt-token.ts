@@ -7,12 +7,12 @@ type Payload = {
 };
 
 export abstract class JwtToken {
-  static async signToken(payload: Payload) {
+  static signToken(payload: Payload) {
     // @ts-expect-error: this env will always be valid expires in time
     return jwt.sign(payload, env.JWT_SECRET, { expiresIn: env.JWT_EXPIRES_IN });
   }
 
-  static async verifyToken(token: string) {
+  static verifyToken(token: string) {
     return jwt.verify(token, env.JWT_SECRET);
   }
 }

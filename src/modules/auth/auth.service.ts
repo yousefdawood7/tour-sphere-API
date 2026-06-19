@@ -17,7 +17,7 @@ export class AuthService {
 
     const newUser = await UserModel.create(body);
 
-    const token = await JwtToken.signToken({ id: newUser.id });
+    const token = JwtToken.signToken({ id: newUser.id });
 
     return { token, user: newUser };
   };
@@ -39,7 +39,7 @@ export class AuthService {
       error: false,
       statusCode: 200,
       message: "You're logged in successfully",
-      token: await JwtToken.signToken({ id: user.id }),
+      token: JwtToken.signToken({ id: user.id }),
     };
   };
 }
