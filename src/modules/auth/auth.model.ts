@@ -20,6 +20,7 @@ export const userSchema = new Schema({
     required: [true, 'Name is required'],
     trim: true,
     lowercase: true,
+    minLength: [3, 'Name must be at least 3 characters long'],
   },
 
   avatar: String,

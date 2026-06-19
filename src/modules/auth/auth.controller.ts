@@ -1,6 +1,7 @@
+import type { Request, Response } from 'express';
 import { injectable } from 'tsyringe';
 
 @injectable()
 export class AuthController {
-  signup = () => {};
+  signup = (req: Request, res: Response) => {};
 }
