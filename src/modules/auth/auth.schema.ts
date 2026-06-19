@@ -35,7 +35,7 @@ export const signupSchema = z
         error: 'Password must contain at least one number',
       }),
 
-    confirmPassword: z.coerce
+    confirmPassword: z
       .string({ error: 'Please confirm your password' })
       .min(1, 'Please confirm your password'),
   })
@@ -43,3 +43,5 @@ export const signupSchema = z
     path: ['confirmPassword'],
     message: "Passwords don't match",
   });
+
+export type SignupSchema = z.infer<typeof signupSchema>;

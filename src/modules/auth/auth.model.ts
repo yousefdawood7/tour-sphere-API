@@ -1,6 +1,12 @@
 import bcrypt from 'bcryptjs';
-import { type InferSchemaType, model, Schema } from 'mongoose';
+import {
+  type HydratedDocument,
+  type InferSchemaType,
+  model,
+  Schema,
+} from 'mongoose';
 
+import { handleCustomError } from '../../config/error-codes.config';
 import { env } from '../../lib/env';
 
 const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -58,18 +64,23 @@ export const userSchema = new Schema({
     },
   },
 
-  passwordConfirm: {
+  confirmPassword: {
     type: String,
     required: [true, 'Please confirm your password'],
     select: false,
 
     validate: {
-      validator(this, passwordConfirm: string) {
-        return this.password === passwordConfirm;
+      validator(this, confirmPassword: string) {
+        return this.password === confirmPassword;
       },
 
       message: 'Passwords do not match',
     },
+  },
+
+  __v: {
+    type: String,
+    select: false,
   },
 });
 
@@ -79,9 +90,20 @@ userSchema.pre('save', async function () {
     this.password = hashedPassword;
 
     // @ts-expect-error: this for mongoose cause if we add undefined for a property it won't be saved to the database
-    this.passwordConfirm = undefined;
+    this.confirmPassword = undefined;
   }
 });
 
+userSchema.post(
+  /^(find|save)/,
+  { errorHandler: true },
+  function (error, _doc, next) {
+    const apiError = handleCustomError(error);
+    next(apiError);
+  },
+);
+
 export type User = InferSchemaType<typeof userSchema>;
+export type UserDocument = HydratedDocument<User>;
+
 export const UserModel = model('User', userSchema);
