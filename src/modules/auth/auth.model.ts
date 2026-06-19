@@ -1,4 +1,7 @@
+import bcrypt from 'bcryptjs';
 import { type InferSchemaType, model, Schema } from 'mongoose';
+
+import { env } from '../../lib/env';
 
 const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
@@ -69,7 +72,15 @@ export const userSchema = new Schema({
   },
 });
 
-userSchema.pre('save', function () {});
+userSchema.pre('save', async function () {
+  if (this.isModified('password')) {
+    const hashedPassword = await bcrypt.hash(this.password, env.BCRYPT_ROUNDS);
+    this.password = hashedPassword;
+
+    // @ts-expect-error: this for mongoose cause if we add undefined for a property it won't be saved to the database
+    this.passwordConfirm = undefined;
+  }
+});
 
 export type User = InferSchemaType<typeof userSchema>;
 export const UserModel = model('User', userSchema);
