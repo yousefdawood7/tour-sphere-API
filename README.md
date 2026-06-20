@@ -24,6 +24,7 @@
 
 - 🗄️ MongoDB Atlas database integration
 - 🧩 Modular architecture with dependency injection (tsyringe)
+- 🔐 JWT-based authentication (signup & login) with bcrypt password hashing
 - ✅ Runtime request validation (Zod v4)
 - 🛡️ Structured global error handling with operational vs. programming error distinction
 - 🔍 Advanced query features — filtering, sorting, field selection & pagination
@@ -42,6 +43,8 @@
 | [MongoDB Atlas](https://www.mongodb.com/atlas) | Cloud database |
 | [Mongoose 9](https://mongoosejs.com) | MongoDB ODM — schemas, models, hooks |
 | [Zod 4](https://zod.dev) | Runtime schema & request validation |
+| [jsonwebtoken](https://github.com/auth0/node-jsonwebtoken) | JWT token signing & verification |
+| [bcryptjs](https://github.com/dcodeIO/bcrypt.js) | Password hashing |
 | [@t3-oss/env-core](https://env.t3.gg) | Type-safe environment variables |
 | [tsyringe](https://github.com/microsoft/tsyringe) | Dependency injection container |
 | [slugify](https://github.com/simov/slugify) | URL-friendly slug generation |
@@ -79,6 +82,10 @@ NODE_ENV=development
 DATABASE_NAME=<your-db-user>
 DATABASE_PASSWORD=<your-db-password>
 DATABASE_URL=mongodb+srv://<user>:<PASSWORD>@<cluster>.mongodb.net/?appName=<app>
+
+JWT_SECRET=<min-32-character-secret>
+JWT_EXPIRES_IN=1d
+BCRYPT_ROUNDS=12
 ```
 
 All variables are validated at startup using **Zod v4** via `@t3-oss/env-core`. The server will throw and refuse to start if any variable is missing or invalid:
@@ -93,6 +100,13 @@ export const env = createEnv({
     DATABASE_NAME: z.string().min(3).max(128),
     DATABASE_PASSWORD: z.string().min(3).max(128),
     DATABASE_URL: z.url(),
+
+    BCRYPT_ROUNDS: z.coerce.number().min(12).max(31).default(12),
+    JWT_SECRET: z.string().min(32).max(256),
+    JWT_EXPIRES_IN: z.union([
+      z.number().positive(),
+      z.string().regex(/^\d+(s|m|h|d|w|y)$/).default('1d'),
+    ]),
   },
   runtimeEnv: process.env,
   emptyStringAsUndefined: true,
@@ -125,6 +139,36 @@ Populates the database with sample tour data from `dev-data/data/`.
 ---
 
 ## API Endpoints
+
+### Authentication
+
+| Method | Endpoint | Description |
+| ------ | -------- | ----------- |
+| `POST` | `/auth/signup` | Register a new user (returns JWT) |
+| `POST` | `/auth/login` | Authenticate an existing user (returns JWT) |
+
+#### Signup Request Body
+
+```json
+{
+  "name": "John Doe",
+  "email": "john@example.com",
+  "password": "Secret1234",
+  "confirmPassword": "Secret1234",
+  "avatar": "https://example.com/avatar.jpg"  // optional
+}
+```
+
+#### Login Request Body
+
+```json
+{
+  "email": "john@example.com",
+  "password": "Secret1234"
+}
+```
+
+**Password requirements:** minimum 8 characters, at least one uppercase letter, one lowercase letter, and one digit.
 
 ### Tours
 
@@ -184,6 +228,13 @@ src/
 │   └── zod-validation.middleware.ts     # Request validation (body/query/params)
 │
 ├── modules/
+│   ├── auth/
+│   │   ├── auth.controller.ts          # Signup & login route handlers
+│   │   ├── auth.model.ts              # Mongoose User schema & model (bcrypt hooks)
+│   │   ├── auth.routes.ts             # Auth router (/auth/signup, /auth/login)
+│   │   ├── auth.schema.ts            # Zod schemas for signup & login validation
+│   │   └── auth.service.ts           # Authentication business logic
+│   │
 │   └── tours/
 │       ├── aggregations/
 │       │   └── tours.pipeline.ts       # Aggregation pipelines (stats, busiest month)
@@ -202,6 +253,7 @@ src/
 └── utils/
     ├── api-error.ts                    # APIError class
     ├── api-features.ts                 # Query builder (filter, sort, fields, paginate)
+    ├── jwt-token.ts                    # JWT sign & verify utility
     ├── split-commas.ts                 # Comma-separated string → array utility
     ├── types.ts                        # Shared type definitions
     └── zod-utils.ts                    # Zod helper utilities
