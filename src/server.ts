@@ -13,7 +13,7 @@ async function bootstrap() {
   });
 
   process.on('unhandledRejection', (err) => {
-    console.error('🚨 Unhandled Rejection at:', err);
+    console.error('Unhandled Rejection at:', err);
 
     server.close(() => {
       process.exit(1);
