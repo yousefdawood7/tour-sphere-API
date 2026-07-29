@@ -4,11 +4,7 @@ import { container } from 'tsyringe';
 import { zodMiddleware } from '../../middlewares/zod-validation.middleware';
 import { queryFilterSchema } from '../../schemas/query.schema';
 import { TourController } from './tour.controller';
-import {
-  tourIdParamSchema,
-  tourSchema,
-  tourYearParamScheam,
-} from './tour.schema';
+import { tourIdParamSchema, tourYearParamScheam } from './tour.schema';
 
 const router = Router();
 
