@@ -27,7 +27,7 @@ export class AuthService {
 
     if (
       !user?.email ||
-      !(await user.verifyPassword(body.password, user?.password))
+      !(await user.verifyPassword(body.password, user.password))
     )
       return {
         error: true,

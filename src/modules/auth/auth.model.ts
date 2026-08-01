@@ -40,25 +40,21 @@ export const userSchema = new Schema(
         validator(password: string) {
           const errors: string[] = [];
 
-          if (password.length < 8) {
+          if (password.length < 8)
             errors.push('Password must be at least 8 characters long');
-          }
 
-          if (!/[A-Z]/.test(password)) {
+          if (!/[A-Z]/.test(password))
             errors.push('Password must contain at least one uppercase letter');
-          }
 
-          if (!/[a-z]/.test(password)) {
+          if (!/[a-z]/.test(password))
             errors.push('Password must contain at least one lowercase letter');
-          }
 
-          if (!/\d/.test(password)) {
+          if (!/\d/.test(password))
             errors.push('Password must contain at least one number');
-          }
 
-          if (errors.length) {
+          // prettier-ignore
+          if (errors.length)
             throw new Error(errors.join(', ')); //! We'll handle that separately in custom error handler
-          }
 
           return true;
         },

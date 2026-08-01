@@ -22,12 +22,10 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/tours', tourRouter);
 app.use('/auth', authRouter);
 
-app.all('/{*splat}', (req, _res, next) => {
-  next(
-    new APIError(
-      `The requested page (${req.originalUrl}) could not be found`,
-      404,
-    ),
+app.all('/{*splat}', (req, _res) => {
+  throw new APIError(
+    `The requested page (${req.originalUrl}) could not be found`,
+    404,
   );
 });
 
