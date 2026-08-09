@@ -1,5 +1,6 @@
 import type { NextFunction, Request, Response } from 'express';
 
+import { handleCustomError } from '../config/error-codes.config';
 import { env } from '../lib/env';
 import type { APIError } from '../utils/api-error';
 
@@ -10,28 +11,32 @@ export function globalErrorMiddleware(
   _next: NextFunction,
 ) {
   //! those default checks if we handled error is not an APIError instance
-  const statusCode = err.statusCode || 500;
+  const catchedError = handleCustomError(err) || err;
+
+  const statusCode = catchedError.statusCode || 500;
   const status = statusCode < 500 ? 'fail' : 'error';
 
   if (env.APP_STAGE === 'dev')
     return res.status(statusCode).json({
       status,
-      message: err.message || 'Something went wrong',
+      message: catchedError.message || 'Something went wrong',
 
       //! for handling non APIError instance
-      ...((err.details instanceof Object
-        ? Object.values(err.details).length
-        : false) && { details: err.details }),
-      error: err,
-      stack: err.stack,
+      ...((catchedError.details instanceof Object
+        ? Object.values(catchedError.details).length
+        : false) && { details: catchedError.details }),
+      error: catchedError,
+      stack: catchedError.stack,
     });
 
-  if (err.isOperational)
+  if (catchedError.isOperational)
     return res.status(statusCode).json({
       status,
-      message: err.message,
+      message: catchedError.message,
 
-      ...(Object.values(err.details).length && { details: err.details }),
+      ...(Object.values(catchedError.details).length && {
+        details: catchedError.details,
+      }),
     });
 
   //! because non operational errors won't have any status or status code so we pre-define it
@@ -39,6 +44,6 @@ export function globalErrorMiddleware(
     status: 'error',
     statusCode: 500,
 
-    message: err.message || 'Something went wrong',
+    message: catchedError.message || 'Something went wrong',
   });
 }
