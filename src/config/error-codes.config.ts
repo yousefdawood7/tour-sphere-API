@@ -24,15 +24,22 @@ type CustomErrorTypes = {
   };
 };
 
-export const handleCustomError = function (
-  error: any,
-): APIError | Error | undefined {
+export const handleCustomError = function (error: any): APIError | undefined {
   if (error.name === 'ValidationError') return validationError(error);
   if (error.name === 'CastError') return invalidDocumentId();
   if (error.code === 11000) return duplicateEntriesError(error);
+  if (['TokenExpiredError', 'JsonWebTokenError'].includes(error.name))
+    return JwtExpiredTokenError();
 
   if (env.APP_STAGE === 'production')
-    return new Error('Unhandled Error Exception');
+    return new APIError('Unhandled Error Exception', 500);
+};
+
+const JwtExpiredTokenError = () => {
+  return new APIError(
+    'Your session has expired or is invalid. Please log in again',
+    401,
+  );
 };
 
 const handlePasswordErrorOptions = (passwordError: string) =>

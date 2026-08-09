@@ -1,4 +1,4 @@
-import jwt from 'jsonwebtoken';
+import jwt, { type JwtPayload } from 'jsonwebtoken';
 
 import { env } from '../lib/env';
 
@@ -16,3 +16,7 @@ export abstract class JwtToken {
     return jwt.verify(token, env.JWT_SECRET);
   }
 }
+
+export type UserJwtPayload = {
+  id: string;
+} & JwtPayload;

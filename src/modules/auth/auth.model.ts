@@ -1,17 +1,35 @@
 import bcrypt from 'bcryptjs';
-import {
-  type HydratedDocument,
-  type InferSchemaType,
-  model,
-  Schema,
-} from 'mongoose';
+import { type HydratedDocument, type Model, model, Schema } from 'mongoose';
 
-import { handleCustomError } from '../../config/error-codes.config';
 import { env } from '../../lib/env';
+import { ROLE_PERMISSIONS } from './permissions';
 
 const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
-export const userSchema = new Schema(
+type User = {
+  email: string;
+  name: string;
+  password: string;
+  confirmPassword: string;
+  role: keyof typeof ROLE_PERMISSIONS;
+  avatar?: string;
+  changePasswordAt?: Date;
+
+  __v?: number;
+};
+
+type UserMethods = {
+  verifyPassword(
+    enteredPassword: string,
+    hashedPassword: string,
+  ): Promise<boolean>;
+  isTokenExpired(iat: number): boolean;
+};
+
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+type UserModel = Model<User, {}, UserMethods>;
+
+export const userSchema = new Schema<User, UserModel, UserMethods>(
   {
     email: {
       type: String,
@@ -30,6 +48,12 @@ export const userSchema = new Schema(
       minLength: [3, 'Name must be at least 3 characters long'],
     },
 
+    role: {
+      type: String,
+      enum: [...Object.keys(ROLE_PERMISSIONS)],
+      default: 'user' as keyof typeof ROLE_PERMISSIONS,
+    },
+
     avatar: String,
 
     password: {
@@ -40,25 +64,21 @@ export const userSchema = new Schema(
         validator(password: string) {
           const errors: string[] = [];
 
-          if (password.length < 8) {
+          if (password.length < 8)
             errors.push('Password must be at least 8 characters long');
-          }
 
-          if (!/[A-Z]/.test(password)) {
+          if (!/[A-Z]/.test(password))
             errors.push('Password must contain at least one uppercase letter');
-          }
 
-          if (!/[a-z]/.test(password)) {
+          if (!/[a-z]/.test(password))
             errors.push('Password must contain at least one lowercase letter');
-          }
 
-          if (!/\d/.test(password)) {
+          if (!/\d/.test(password))
             errors.push('Password must contain at least one number');
-          }
 
-          if (errors.length) {
+          // prettier-ignore
+          if (errors.length)
             throw new Error(errors.join(', ')); //! We'll handle that separately in custom error handler
-          }
 
           return true;
         },
@@ -71,13 +91,16 @@ export const userSchema = new Schema(
       select: false,
 
       validate: {
-        validator(this, confirmPassword: string) {
-          return this.password === confirmPassword;
+        validator(confirmPassword: string) {
+          const doc = this as UserDocument;
+          return doc.password === confirmPassword;
         },
 
         message: 'Passwords do not match',
       },
     },
+
+    changePasswordAt: Date,
 
     __v: {
       type: Number,
@@ -88,6 +111,14 @@ export const userSchema = new Schema(
     methods: {
       verifyPassword: (enteredPassword: string, hashedPassword: string) =>
         bcrypt.compare(enteredPassword, hashedPassword),
+
+      isTokenExpired: function (issuedAtToken: number) {
+        // prettier-ignore
+        if (!this.changePasswordAt)
+          return false;
+
+        return issuedAtToken < this.changePasswordAt.getTime() / 1000;
+      },
     },
   },
 );
@@ -102,16 +133,6 @@ userSchema.pre('save', async function () {
   }
 });
 
-userSchema.post(
-  /^(find|save)/,
-  { errorHandler: true },
-  function (error, _doc, next) {
-    const apiError = handleCustomError(error);
-    next(apiError);
-  },
-);
-
-export type User = InferSchemaType<typeof userSchema>;
-export type UserDocument = HydratedDocument<User>;
+export type UserDocument = HydratedDocument<User, UserMethods>;
 
 export const UserModel = model('User', userSchema);

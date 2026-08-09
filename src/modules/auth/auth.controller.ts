@@ -24,7 +24,7 @@ export class AuthController {
       token: newUser.token,
       statusCode: 201,
 
-      details: {
+      data: {
         user: serializedUser,
       },
     });
