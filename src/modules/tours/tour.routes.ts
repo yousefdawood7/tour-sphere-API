@@ -3,8 +3,13 @@ import { container } from 'tsyringe';
 
 import { zodMiddleware } from '../../middlewares/zod-validation.middleware';
 import { queryFilterSchema } from '../../schemas/query.schema';
+import { protect } from '../auth/middlewares/protect.middleware';
 import { TourController } from './tour.controller';
-import { tourIdParamSchema, tourYearParamScheam } from './tour.schema';
+import {
+  tourIdParamSchema,
+  tourSchema,
+  tourYearParamScheam,
+} from './tour.schema';
 
 const router = Router();
 
@@ -12,9 +17,13 @@ const tourController = container.resolve(TourController);
 
 router
   .route('/')
-  .get(zodMiddleware(queryFilterSchema, 'query'), tourController.getAllTours)
-  .post(tourController.createTour);
-// .post(zodMiddleware(tourSchema, 'body'), tourController.createTour);
+  .get(
+    protect,
+    zodMiddleware(queryFilterSchema, 'query'),
+    tourController.getAllTours,
+  )
+  .post(tourController.createTour)
+  .post(zodMiddleware(tourSchema, 'body'), tourController.createTour);
 
 router.route('/stats').get(tourController.getTourStats);
 
