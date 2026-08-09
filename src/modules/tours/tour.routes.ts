@@ -22,7 +22,6 @@ router
     zodMiddleware(queryFilterSchema, 'query'),
     tourController.getAllTours,
   )
-  .post(tourController.createTour)
   .post(zodMiddleware(tourSchema, 'body'), tourController.createTour);
 
 router.route('/stats').get(tourController.getTourStats);

@@ -25,6 +25,7 @@ type CustomErrorTypes = {
 };
 
 export const handleCustomError = function (error: any): APIError | undefined {
+  if (error instanceof APIError) return error;
   if (error.name === 'ValidationError') return validationError(error);
   if (error.name === 'CastError') return invalidDocumentId();
   if (error.code === 11000) return duplicateEntriesError(error);

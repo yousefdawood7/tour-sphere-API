@@ -31,6 +31,6 @@ export async function protect(
       401,
     );
 
-  req.body.user = currentUser;
+  res.locals.user = currentUser;
   next();
 }
