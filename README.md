@@ -38,11 +38,11 @@
 
 | Tool | Purpose |
 | ---- | ------- |
-| [Express 5](https://expressjs.com) | HTTP server framework |
-| [TypeScript 5.8](https://www.typescriptlang.org) | Static typing |
+| [Express](https://expressjs.com) | HTTP server framework |
+| [TypeScript](https://www.typescriptlang.org) | Static typing |
 | [MongoDB Atlas](https://www.mongodb.com/atlas) | Cloud database |
-| [Mongoose 9](https://mongoosejs.com) | MongoDB ODM — schemas, models, hooks |
-| [Zod 4](https://zod.dev) | Runtime schema & request validation |
+| [Mongoose](https://mongoosejs.com) | MongoDB ODM — schemas, models, hooks |
+| [Zod](https://zod.dev) | Runtime schema & request validation |
 | [jsonwebtoken](https://github.com/auth0/node-jsonwebtoken) | JWT token signing & verification |
 | [bcryptjs](https://github.com/dcodeIO/bcrypt.js) | Password hashing |
 | [@t3-oss/env-core](https://env.t3.gg) | Type-safe environment variables |
